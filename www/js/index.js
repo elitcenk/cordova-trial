@@ -68,7 +68,7 @@ var app = {
                     // They've been here before.
                 } else {
                     // set a new cookie
-                    expiry = new Date();
+                    var expiry = new Date();
                     expiry.setTime(expiry.getTime() + (10 * 60 * 1000)); // Ten minutes
                     document.cookie = "visited=yes; expires=" + expiry.toGMTString();
                     navigator.notification.activityStart("", "Loading....");
@@ -89,6 +89,7 @@ var app = {
                 ref.removeEventListener('loadstop', inAppBrowserbLoadStop);
                 ref.removeEventListener('loaderror', inAppBrowserbLoadError);
                 ref.removeEventListener('exit', inAppBrowserbClose);
+                navigator.app.exitApp();
             }
         }
     }
