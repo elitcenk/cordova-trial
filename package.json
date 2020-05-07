@@ -15,7 +15,9 @@
   "dependencies": {
     "cordova-android": "^8.1.0",
     "cordova-plugin-device": "^2.0.3",
+    "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-inappbrowser": "^3.2.0",
+    "cordova-plugin-network-information": "^2.0.2",
     "cordova-plugin-splashscreen": "^5.0.3"
   },
   "devDependencies": {
@@ -26,7 +28,9 @@
       "cordova-plugin-whitelist": {},
       "cordova-plugin-inappbrowser": {},
       "cordova-plugin-device": {},
-      "cordova-plugin-splashscreen": {}
+      "cordova-plugin-splashscreen": {},
+      "cordova-plugin-network-information": {},
+      "cordova-plugin-dialogs": {}
     },
     "platforms": [
       "android"

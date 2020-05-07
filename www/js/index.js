@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 var app = {
     // Application Constructor
     initialize: function () {
@@ -24,7 +23,6 @@ var app = {
     },
 
     // deviceready Event Handler
-    //
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
     onDeviceReady: function () {
@@ -33,13 +31,66 @@ var app = {
 
     // Update DOM on a Received Event
     receivedEvent: function (id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
+        setTimeout(function () {
+            navigator.splashscreen.hide();
+        }, 2000);
         console.log('Received Event: ' + id);
-        ref = window.open(encodeURI('https://thefeta.com/'), '_blank', 'location=no');
+        // Update DOM on a Received Event
+
+        // check network start
+        var networkState = navigator.network.connection.type;
+        var states = {};
+        states[Connection.UNKNOWN] = 'Unknown connection';
+        states[Connection.ETHERNET] = 'Ethernet connection';
+        states[Connection.WIFI] = 'WiFi connection';
+        states[Connection.CELL_2G] = 'Cell 2G connection';
+        states[Connection.CELL_3G] = 'Cell 3G connection';
+        states[Connection.CELL_4G] = 'Cell 4G connection';
+        states[Connection.NONE] = 'No network connection';
+        if (states[networkState] == states[Connection.NONE]) {
+            navigator.notification.alert(
+                'No Internet Connection! Please Turn on Wifi or Mobile Data to use this application',  // message
+                null,         // callback
+                'No Internet Connection',            // title
+                'Ok'                  // buttonName
+            );
+            //alert('No Internet Connection! Please Turn on Wifi or Mobile Data to use this application');
+        } else {
+            var ref = window.open('https://thefeta.com', '_blank', 'location=no,zoom=no');
+            ref.addEventListener('loadstart', inAppBrowserbLoadStart);
+            ref.addEventListener('loadstop', inAppBrowserbLoadStop);
+            ref.addEventListener('loaderror', inAppBrowserbLoadError);
+            ref.addEventListener('exit', inAppBrowserbClose);
+
+            function inAppBrowserbLoadStart(event) {
+                ////////////////////////////////
+                if (document.cookie.indexOf("visited=") >= 0) {
+                    // They've been here before.
+                } else {
+                    // set a new cookie
+                    expiry = new Date();
+                    expiry.setTime(expiry.getTime() + (10 * 60 * 1000)); // Ten minutes
+                    document.cookie = "visited=yes; expires=" + expiry.toGMTString();
+                    navigator.notification.activityStart("", "Loading....");
+                }
+            }
+
+            function inAppBrowserbLoadStop(event) {
+                navigator.splashscreen.hide();
+                navigator.notification.activityStop();
+            }
+
+            function inAppBrowserbLoadError(event) {
+                navigator.notification.activityStop();
+            }
+
+            function inAppBrowserbClose(event) {
+                ref.removeEventListener('loadstart', inAppBrowserbLoadStart);
+                ref.removeEventListener('loadstop', inAppBrowserbLoadStop);
+                ref.removeEventListener('loaderror', inAppBrowserbLoadError);
+                ref.removeEventListener('exit', inAppBrowserbClose);
+            }
+        }
     }
 };
 
